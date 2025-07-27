@@ -1,0 +1,132 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Калькулятор систем счисления";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор систем счисления</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+        }
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+            border-color: #6366f1;
+        }
+        .result-animation {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="gradient-bg text-white rounded-t-xl p-6 shadow-lg">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-bold">
+                    <i class="fas fa-calculator mr-2"></i> Калькулятор систем счисления
+                </h1>
+            </div>
+            <p class="text-indigo-100 mt-2 text-sm">Арифметические операции в разных системах счисления</p>
+        </div>
+
+        <div class="bg-white rounded-b-xl shadow-lg p-6">
+            <form id="calculatorForm" method="post" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="number1" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-hashtag mr-1 text-indigo-500"></i> Первое число
+                        </label>
+                        <input type="text" id="number1" name="Number1" value="@Model.Number1" placeholder="Например: 1011, FF, 255..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition duration-200 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label for="base1" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-sort-numeric-up mr-1 text-indigo-500"></i> Система счисления
+                        </label>
+                        <select id="base1" name="Base1" asp-for="Base1" asp-items="Model.BaseOptions" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition duration-200 focus:outline-none">
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="number2" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-hashtag mr-1 text-indigo-500"></i> Второе число
+                        </label>
+                        <input type="text" id="number2" name="Number2" value="@Model.Number2" placeholder="Например: 1011, FF, 255..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition duration-200 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label for="base2" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-sort-numeric-up mr-1 text-indigo-500"></i> Система счисления
+                        </label>
+                        <select id="base2" name="Base2" asp-for="Base2" asp-items="Model.BaseOptions" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition duration-200 focus:outline-none">
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="operation" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-calculator mr-1 text-indigo-500"></i> Операция
+                        </label>
+                        <select id="operation" name="Operation" asp-for="Operation" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition duration-200 focus:outline-none">
+                            <option value="+">Сложение</option>
+                            <option value="-">Вычитание</option>
+                            <option value="*">Умножение</option>
+                            <option value="/">Деление</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="resultBase" class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-arrow-up mr-1 text-indigo-500"></i> Результат в системе
+                        </label>
+                        <select id="resultBase" name="ResultBase" asp-for="ResultBase" asp-items="Model.BaseOptions" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition duration-200 focus:outline-none">
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full gradient-bg text-white py-3 px-4 rounded-lg font-medium hover:opacity-90 transition duration-200 shadow-md flex items-center justify-center">
+                    <i class="fas fa-equals mr-2"></i> Вычислить
+                </button>
+            </form>
+
+            @if (!string.IsNullOrEmpty(Model.Result))
+            {
+                <div id="resultContainer" class="mt-6 result-animation">
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-gray-500 mb-1">Результат:</h3>
+                        <p id="resultValue" class="text-2xl font-bold text-indigo-600">@Model.Result</p>
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div id="errorContainer" class="mt-6 result-animation">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-red-500 mb-1">Ошибка:</h3>
+                        <p id="errorValue" class="text-sm text-red-600">@Model.Error</p>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</body>
+</html> 

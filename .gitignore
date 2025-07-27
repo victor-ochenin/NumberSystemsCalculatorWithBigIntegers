@@ -1,0 +1,17 @@
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.swp
+*.tmp
+*.log
+*.vs/
+TestResults/
+.vscode/
+.DS_Store
+Thumbs.db
+# Исключить только Debug папки внутри bin и obj
+bin/Debug/
+obj/Debug/ 

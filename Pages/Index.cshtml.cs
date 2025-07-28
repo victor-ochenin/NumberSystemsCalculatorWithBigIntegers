@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NumberSystemsCalculator.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 using NumberSystemsCalculator.Models;
+using NumberSystemsCalculator.Services;
 
 public class IndexModel : PageModel
 {
@@ -16,15 +17,22 @@ public class IndexModel : PageModel
     }
 
     [BindProperty]
+    [Required(ErrorMessage = "Первое число обязательно для заполнения")]
     public string Number1 { get; set; } = string.Empty;
+    
     [BindProperty]
     public int Base1 { get; set; } = 10;
+    
     [BindProperty]
+    [Required(ErrorMessage = "Второе число обязательно для заполнения")]
     public string Number2 { get; set; } = string.Empty;
+    
     [BindProperty]
     public int Base2 { get; set; } = 10;
+    
     [BindProperty]
     public string Operation { get; set; } = "+";
+    
     [BindProperty]
     public int ResultBase { get; set; } = 10;
     
@@ -39,7 +47,7 @@ public class IndexModel : PageModel
         PopulateBaseOptions();
     }
 
-    public void OnPost()
+    public async Task OnPostAsync()
     {
         _logger.LogInformation("OnPost called. Number1: {Number1}, Base1: {Base1}, Number2: {Number2}, Base2: {Base2}, Operation: {Operation}, ResultBase: {ResultBase}", 
             Number1, Base1, Number2, Base2, Operation, ResultBase);
@@ -49,6 +57,13 @@ public class IndexModel : PageModel
         if (!ModelState.IsValid)
         {
             _logger.LogWarning("ModelState is invalid.");
+            
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            
+            Error = errors.Any() ? string.Join(", ", errors) : "Пожалуйста, проверьте введенные данные.";
             Result = null;
             return;
         }
@@ -57,14 +72,26 @@ public class IndexModel : PageModel
         {
             _logger.LogInformation("Attempting calculation: {Number1} (base {Base1}) {Operation} {Number2} (base {Base2}) = ? (base {ResultBase})", 
                 Number1, Base1, Operation, Number2, Base2, ResultBase);
-            Result = NumberSystemCalculator.Calculate(Number1 ?? string.Empty, Base1, Number2 ?? string.Empty, Base2, Operation, ResultBase);
+            Result = await NumberSystemCalculator.CalculateAsync(Number1, Base1, Number2, Base2, Operation, ResultBase);
             Error = null;
             _logger.LogInformation("Calculation successful. Result: {Result}", Result);
+        }
+        catch (ArgumentException ex)
+        {
+            Result = null;
+            Error = ex.Message;
+            _logger.LogError(ex, "Validation failed: {Message}", ex.Message);
+        }
+        catch (DivideByZeroException ex)
+        {
+            Result = null;
+            Error = ex.Message;
+            _logger.LogError(ex, "Division by zero: {Message}", ex.Message);
         }
         catch (Exception ex)
         {
             Result = null;
-            Error = ex.Message;
+            Error = "Произошла ошибка при вычислении. Пожалуйста, проверьте введенные данные.";
             _logger.LogError(ex, "Calculation failed: {Message}", ex.Message);
         }
     }

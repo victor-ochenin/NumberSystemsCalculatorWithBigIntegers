@@ -187,28 +187,21 @@ namespace NumberSystemsCalculator.Services
 
         private static BigInteger ConvertFromBase(string value, int fromBase)
         {
+            Console.WriteLine($"[DEBUG] ConvertFromBase: value='{value}', fromBase={fromBase}");
             if (fromBase == 10)
             {
                 return BigInteger.Parse(value);
             }
-            else if (fromBase == 16)
+            // Убираем ветку для fromBase == 16, используем универсальный разбор
+            BigInteger result = BigInteger.Zero;
+            BigInteger power = BigInteger.One;
+            for (int i = value.Length - 1; i >= 0; i--)
             {
-                return BigInteger.Parse(value, System.Globalization.NumberStyles.HexNumber);
+                int digitValue = GetDigitValue(value[i], fromBase);
+                result += digitValue * power;
+                power *= fromBase;
             }
-            else
-            {
-                BigInteger result = BigInteger.Zero;
-                BigInteger power = BigInteger.One;
-                
-                for (int i = value.Length - 1; i >= 0; i--)
-                {
-                    int digitValue = GetDigitValue(value[i], fromBase);
-                    result += digitValue * power;
-                    power *= fromBase;
-                }
-                
-                return result;
-            }
+            return result;
         }
     }
 } 

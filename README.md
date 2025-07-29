@@ -877,10 +877,7 @@ private string GetBaseName(int b)
 
 Тут дизайн нагенерил с DeepSite. Не умею стили делать. 
 
-<video width="100%" controls>
-  <source src="images/TestVideo.mp4" type="video/mp4">
-  Ваш браузер не поддерживает видео.
-</video>
+![Видео демонстрации](images/TestVideo.gif)
 
 <bar>
 

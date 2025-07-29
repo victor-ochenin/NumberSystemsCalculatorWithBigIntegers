@@ -18,7 +18,6 @@ namespace NumberSystemsCalculator.Services
         {
             if (operation == "/")
             {
-                // Проверяем, что второе число не равно нулю
                 if (string.IsNullOrWhiteSpace(number2) || number2.Trim() == "0")
                     throw new DivideByZeroException("Деление на ноль невозможно.");
             }

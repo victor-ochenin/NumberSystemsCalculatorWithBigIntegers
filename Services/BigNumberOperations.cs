@@ -69,20 +69,16 @@ namespace NumberSystemsCalculator.Services
             if (int2 == BigInteger.Zero && Math.Abs(frac2) < 0.0000001m)
                 throw new DivideByZeroException("Деление на ноль невозможно.");
 
-            // Вычисляем полное деление как decimal
             decimal fullResult = (decimal)int1 / (decimal)int2;
-            
-            // Разделяем на целую и дробную части
+
             BigInteger resultInt = (BigInteger)Math.Floor(fullResult);
             decimal resultFrac = fullResult - (decimal)resultInt;
 
-            // Если есть дробная часть от исходных чисел, учитываем её
             if (Math.Abs(frac1) > 0.0000001m || Math.Abs(frac2) > 0.0000001m)
             {
                 decimal fractionalResult = frac1 / (decimal)int2;
                 resultFrac += fractionalResult;
                 
-                // Нормализуем результат
                 if (resultFrac >= 1)
                 {
                     resultInt += BigInteger.One;

@@ -40,13 +40,6 @@ namespace NumberSystemsCalculator.Services
             var (bigIntResult, fractionalResult) = BigNumberOperations.PerformOperation(
                 operation, bigIntValue1, fractionalValue1, bigIntValue2, fractionalValue2);
 
-            var number1InResultBase = NumberConverter.ConvertFromBigInteger(bigIntValue1, fractionalValue1, resultBase);
-            var number2InResultBase = NumberConverter.ConvertFromBigInteger(bigIntValue2, fractionalValue2, resultBase);
-            string number1Log = fractionalValue1 == 0 ? bigIntValue1.ToString() : $"{bigIntValue1}.{fractionalValue1.ToString().TrimStart('0').TrimEnd('0')}";
-            string number2Log = fractionalValue2 == 0 ? bigIntValue2.ToString() : $"{bigIntValue2}.{fractionalValue2.ToString().TrimStart('0').TrimEnd('0')}";
-            Console.WriteLine($"[LOG] Number1 in result base ({resultBase}): {number1Log}");
-            Console.WriteLine($"[LOG] Number2 in result base ({resultBase}): {number2Log}");
-
             return await Task.Run(() => NumberConverter.ConvertFromBigInteger(bigIntResult, fractionalResult, resultBase));
         }
     }

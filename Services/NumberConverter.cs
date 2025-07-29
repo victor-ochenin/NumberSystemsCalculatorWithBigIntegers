@@ -88,14 +88,18 @@ namespace NumberSystemsCalculator.Services
                     return ((decimal)integerPart + fractionalPart).ToString();
             }
 
+            if (integerPart < 0)
+            {
+                string absResult = ConvertBigIntegerToString(BigInteger.Abs(integerPart), toBase);
+                return "-" + absResult;
+            }
+
             string convertedResult = ConvertBigIntegerToString(integerPart, toBase);
-            
             if (fractionalPart > 0)
             {
                 string fractionalString = ConvertFractionalPartToString(fractionalPart, toBase);
                 convertedResult += "." + fractionalString;
             }
-
             return convertedResult;
         }
 
@@ -187,12 +191,11 @@ namespace NumberSystemsCalculator.Services
 
         private static BigInteger ConvertFromBase(string value, int fromBase)
         {
-            Console.WriteLine($"[DEBUG] ConvertFromBase: value='{value}', fromBase={fromBase}");
             if (fromBase == 10)
             {
                 return BigInteger.Parse(value);
             }
-            // Убираем ветку для fromBase == 16, используем универсальный разбор
+
             BigInteger result = BigInteger.Zero;
             BigInteger power = BigInteger.One;
             for (int i = value.Length - 1; i >= 0; i--)
